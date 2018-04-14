@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg>
+			<ref bean="dataSource" />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="namedParameterJdbcTemplate"
+		class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg>
+			<ref bean="dataSource" />
+		</constructor-arg>
+	</bean>
+
+	<!--数据收集测试  
+	<bean id="fivePositionDAO"
+		class="com.data.dao.FivePositionDAOImpl">
+		<property name="jdbcTemplate">
+			<ref bean="jdbcTemplate" />
+		</property>
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+	</bean>-->
+	
+	
+	<bean id="fivePositionScheduler"
+		class="com.data.collection.FivePositionScheduler">
+		<property name="getAllStockInfoDAOImpl">
+			<ref bean="getAllStockInfoDAOImpl" />
+		</property>
+	</bean>
+	
+	<bean id="stockDataPosStrategy" class="com.data.collection.StockDataPosStrategy">
+		<property name="getAllStockInfoDAOImpl">
+			<ref bean="getAllStockInfoDAOImpl" />
+		</property>
+	</bean>
+	
+	<bean id="getAllStockInfoDAOImpl"
+		class="com.data.dao.GetAllStockInfoDAOImpl">
+		<property name="namedParameterJdbcTemplate">
+			<ref bean="namedParameterJdbcTemplate" />
+		</property>
+	</bean>
+	
+
+</beans>
+

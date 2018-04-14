@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName">
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+	
+	<bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">
+		<property name="driver">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+		<property name="driverUrl">
+			<value>jdbc:mysql://localhost:3306/stock?user=root&amp;password=123456</value>
+		</property>
+		<property name="user" value="root" />
+		<property name="password" value="123456" />
+		<property name="alias" value="stock" />
+		<property name="houseKeepingSleepTime" value="90000" />
+		<property name="prototypeCount" value="0" />
+		<property name="maximumConnectionCount" value="100" />
+		<property name="minimumConnectionCount" value="2" />
+		<property name="simultaneousBuildThrottle" value="50" />
+		<property name="maximumConnectionLifetime" value="14400000" />
+		<property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	</bean>
+	<!-- <import resource="applicationContext-dao.xml"/> -->
+
+</beans>
+

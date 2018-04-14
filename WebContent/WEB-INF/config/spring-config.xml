@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-autowire="byName">
+	
+	<!-- For times when you need more complex processing, passing data to the scheduled job
+	<bean name="SpringQtzJobMethod" 	class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.data.collection.FivePositionScheduler" />
+		<property name="durability" value="true" />
+	</bean> -->
+	
+	<bean id="SpringQtzJobMethod"
+		class="com.data.bean.BeanInvokingJobDetailFactoryBean"> 
+		<property name="targetBean" value="fivePositionScheduler" />    
+        <property name="targetMethod" value="processMain"/>
+	</bean>
+	
+	<bean id="stockDataJobMethod"
+		class="com.data.bean.BeanInvokingJobDetailFactoryBean"> 
+		<property name="targetBean" value="stockDataPosStrategy" />    
+        <property name="targetMethod" value="processMain"/>
+	</bean>
+	
+	<bean id="stockDataJobMethodDailyDeal"
+		class="com.data.bean.BeanInvokingJobDetailFactoryBean"> 
+		<property name="targetBean" value="stockDataPosStrategy" />    
+        <property name="targetMethod" value="processDailyMain"/>
+	</bean>
+	
+	<bean id="pullWebDealDataDeal"
+		class="com.data.bean.BeanInvokingJobDetailFactoryBean"> 
+		<property name="targetBean" value="stockDataPosStrategy" />    
+        <property name="targetMethod" value="processWebData"/>
+	</bean>
+	
+	
+	
+	<!-- ======================== 调度触发器 ======================== -->
+	<bean id="cronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="SpringQtzJobMethod"></property>
+		<property name="cronExpression" value="0 0/3 9,10,11,13,14 ? * MON-FRI"></property>
+	</bean> 
+	
+	<bean id="strategyBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="stockDataJobMethod"></property>
+		<property name="cronExpression" value="0 10 16 ? * MON-FRI"></property>
+		<!--  <property name="cronExpression" value="0 0/1 * * * ?"></property>-->
+	</bean>
+	
+	<bean id="processDailyBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="stockDataJobMethodDailyDeal"></property>
+		<property name="cronExpression" value="0 10 18 ? * MON-FRI"></property>
+	</bean>
+	
+	<bean id="pullWebDealData" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="pullWebDealDataDeal"></property>
+		<property name="cronExpression" value="0 0/1 9,10,11,13,14 ? * MON-FRI"></property>
+	</bean>
+
+	<!-- 
+	<bean id="methodInvokingJobDetail"
+		class="com.data.bean.BeanInvokingJobDetailFactoryBean">
+		<property name="targetBean" value="checkAccountTimer" />  
+        <property name="targetMethod" value="run" />  
+	</bean>  -->
+	
+	<!-- ======================== 调度工厂 ======================== -->
+	<bean id="springJobSchedulerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTriggerBean" />
+				<ref bean="strategyBean" />
+				<ref bean="processDailyBean" />
+				<ref bean="pullWebDealData" />
+			</list>
+		</property>
+	</bean>
+</beans>
